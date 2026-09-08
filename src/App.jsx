@@ -3,14 +3,13 @@ import React, { useState } from 'react';
 function App() {
   // টেস্ট করার জন্য ফ্রন্টএন্ডে কিছু ডামী প্রোডাক্ট ডেটা (পরবর্তীতে এটি ব্যাকএন্ড থেকে আসবে)
     // পুরানো প্রোডাক্টের অ্যারেটি বদলে এটি বসিয়ে দিন (শুধু ইমেজের লিংক পরিবর্তন করা হয়েছে)
-      const [products] = useState([
+    const [products] = useState([
     {
       id: "prod1",
       title: "Premium Wireless Headphone",
       description: "High-quality sound with bass boost and 40h battery life.",
       price: 2500,
-      icon: "🎧",
-      bg: "bg-gradient-to-br from-indigo-500 to-indigo-700",
+      imageUrl: "/headphone.jpg", // public ফোল্ডারে থাকা আপনার ছবির নাম
       category: "Electronics"
     },
     {
@@ -18,8 +17,7 @@ function App() {
       title: "Smart Watch Series 9",
       description: "AMOLED Display with heart rate monitoring and 7 days battery.",
       price: 3500,
-      icon: "⌚",
-      bg: "bg-gradient-to-br from-purple-500 to-purple-700",
+      imageUrl: "/watch.jpg", // public ফোল্ডারে থাকা আপনার ছবির নাম
       category: "Gadgets"
     },
     {
@@ -27,8 +25,7 @@ function App() {
       title: "Minimalist Leather Wallet",
       description: "Pure leather slim wallet with RFID blocking security.",
       price: 1200,
-      icon: "💼",
-      bg: "bg-gradient-to-br from-violet-500 to-violet-700",
+      imageUrl: "/wallet.jpg", // public ফোল্ডারে থাকা আপনার ছবির নাম
       category: "Accessories"
     }
   ]);
@@ -77,10 +74,13 @@ function App() {
           {products.map((product) => (
             <div key={product.id} className="bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col group">
                             {/* প্রোডাক্ট ইমেজ এর বদলে সুন্দর নো-ইন্টারনেট লোকাল কার্ড */}
-              <div className={`h-64 relative flex items-center justify-center text-white ${product.bg} overflow-hidden`}>
-                <span className="text-7xl drop-shadow-lg transform group-hover:scale-110 transition duration-500">
-                  {product.icon}
-                </span>
+                            {/* প্রোডাক্ট ইমেজ সেকশন */}
+              <div className="h-64 overflow-hidden bg-slate-100 relative">
+                <img 
+                  src={product.imageUrl} 
+                  alt={product.title} 
+                  className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                />
                 <span className="absolute top-3 left-3 bg-white/90 backdrop-blur-xs text-xs font-bold text-slate-700 px-2.5 py-1 rounded-lg shadow-xs">
                   {product.category}
                 </span>
