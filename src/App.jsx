@@ -6,6 +6,9 @@ function App() {
     // পুরানো প্রোডাক্টের অ্যারেটি বদলে এটি বসিয়ে দিন (শুধু ইমেজের লিংক পরিবর্তন করা হয়েছে)
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [cart, setCart] = useState([]);
+  const [cartSummary, setCartSummary] = useState({ totalItems: 0, totalPrice: 0 });
+
   useEffect(() => {
   const fetchProducts = async () => {
     try {
@@ -33,6 +36,33 @@ function App() {
     );
   }
 
+  // কার্টে প্রোডাক্ট যোগ করার হ্যান্ডলার ফাংশন
+  const handleAddToCart = async (product) => {
+    try {
+      // ব্যাকএন্ড কার্ট এপিআই-তে ডেটা পাঠানো
+      const response = await axios.post('http://localhost:5000/api/cart/add', {
+        userId: "user123", // আপাতত আমরা ডামি ইউজার আইডি ব্যবহার করছি
+        productId: product.id || product._id,
+        title: product.title,
+        price: product.price,
+        quantity: 1 // প্রতি ক্লিকে ১টি করে আইটেম যোগ হবে
+      });
+
+      // ব্যাকএন্ড থেকে আসা লেটেস্ট কার্ট ডেটা ফ্রন্টএন্ড স্টেটে সেভ করা
+      setCart(response.data.cart);
+      
+      // কার্টের টোটাল আইটেম ও প্রাইস লাইভ আপডেট করার হিসাব
+      const totalItems = response.data.cart.reduce((sum, item) => sum + item.quantity, 0);
+      const totalPrice = response.data.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      
+      setCartSummary({ totalItems, totalPrice });
+      
+      alert(`${product.title} সফলভাবে কার্টে যোগ হয়েছে! 🛒`);
+    } catch (error) {
+      console.error("কার্টে যোগ করতে সমস্যা হয়েছে:", error);
+      alert("কার্টে যোগ করা যায়নি, সার্ভার চেক করুন।");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-800">
@@ -48,8 +78,11 @@ function App() {
             <span className="hover:text-indigo-600 cursor-pointer transition">Orders</span>
             <div className="bg-indigo-50 text-indigo-600 px-4 py-2 rounded-xl flex items-center gap-2 cursor-pointer hover:bg-indigo-100 transition">
               <span>🛒 Cart</span>
-              <span className="bg-indigo-600 text-white text-xs px-2 py-0.5 rounded-full">3</span>
+              <span className="bg-indigo-600 text-white text-xs px-2 py-0.5 rounded-full">
+                {cartSummary.totalItems}
+              </span>
             </div>
+
           </div>
         </div>
       </nav>
@@ -100,9 +133,13 @@ function App() {
                 </p>
                 <div className="flex items-center justify-between pt-4 border-t border-slate-50">
                   <span className="text-xl font-black text-slate-900">৳{product.price}</span>
-                  <button className="bg-slate-900 hover:bg-indigo-600 text-white font-bold py-2.5 px-4 rounded-xl shadow-xs transition duration-300 active:scale-95 text-sm">
+                  <button 
+                    onClick={() => handleAddToCart(product)}
+                    className="bg-slate-900 hover:bg-indigo-600 text-white font-bold py-2.5 px-4 rounded-xl shadow-xs transition duration-300 active:scale-95 text-sm"
+                  >
                     Add to Cart 🛒
                   </button>
+
                 </div>
               </div>
             </div>
