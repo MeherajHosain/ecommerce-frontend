@@ -1,34 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 function App() {
   // টেস্ট করার জন্য ফ্রন্টএন্ডে কিছু ডামী প্রোডাক্ট ডেটা (পরবর্তীতে এটি ব্যাকএন্ড থেকে আসবে)
     // পুরানো প্রোডাক্টের অ্যারেটি বদলে এটি বসিয়ে দিন (শুধু ইমেজের লিংক পরিবর্তন করা হয়েছে)
-    const [products] = useState([
-    {
-      id: "prod1",
-      title: "Premium Wireless Headphone",
-      description: "High-quality sound with bass boost and 40h battery life.",
-      price: 2500,
-      imageUrl: "/headphone.jpg", // public ফোল্ডারে থাকা আপনার ছবির নাম
-      category: "Electronics"
-    },
-    {
-      id: "prod2",
-      title: "Smart Watch Series 9",
-      description: "AMOLED Display with heart rate monitoring and 7 days battery.",
-      price: 3500,
-      imageUrl: "/watch.jpg", // public ফোল্ডারে থাকা আপনার ছবির নাম
-      category: "Gadgets"
-    },
-    {
-      id: "prod3",
-      title: "Minimalist Leather Wallet",
-      description: "Pure leather slim wallet with RFID blocking security.",
-      price: 1200,
-      imageUrl: "/wallet.jpg", // public ফোল্ডারে থাকা আপনার ছবির নাম
-      category: "Accessories"
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+  const fetchProducts = async () => {
+    try {
+      // আমাদের ব্যাকএন্ড প্রোডাক্ট এপিআই লিংক
+      const response = await axios.get('http://localhost:5000/api/products');
+      
+      // ব্যাকএন্ডের পাঠানো প্রোডাক্ট লিস্ট রিঅ্যাক্ট স্টেটে সেভ করা
+      setProducts(response.data.products);
+      setLoading(false);
+    } catch (error) {
+      console.error("ডেটা লোড করতে সমস্যা হয়েছে:", error);
+      setLoading(false);
     }
-  ]);
+  };
+
+  fetchProducts();
+}, []);
+
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="text-xl font-bold text-indigo-600 animate-pulse">পণ্য লোড হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন... ⏳</div>
+      </div>
+    );
+  }
 
 
   return (
